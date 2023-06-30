@@ -1,55 +1,82 @@
-const titleInput = document.getElementById('title');
-const descriptionInput = document.getElementById('description');
-const propertySelect = document.getElementById('property');
-const addButton = document.getElementById('add');
-const todoList = document.getElementById('List');
+
+const login = document.getElementById('login');
+const password = document.getElementById('password');
+const buttonLogin = document.getElementById('buttonLogin');
+const pAlert = document.getElementById('alert');
+buttonLogin.disabled = true;
+let emailValidation = false;
+let passwordValidation = false;
+let redirectValue = false
 
 
-
-addButton.addEventListener('click', function() {
-  if (titleInput.value.trim() !== '') {
-  const todoItem = document.createElement('li');
-  const property = propertySelect.value;
-  
-  if (property === 'low') {
-    todoItem.classList.add('low');
-  } else if (property === 'mid') {
-    todoItem.classList.add('mid');
-  } else if (property === 'high') {
-    todoItem.classList.add('high');
+function checkInputs() {
+  if (login.value.trim() !== '' && password.value.trim() !== '') {
+    buttonLogin.disabled = false;
   }
-
-  const titleElement = document.createElement('h3');
-  const descriptionElement = document.createElement('p');
-  const checkbox = document.createElement('input');
-  const deleteButton = document.createElement('button');
-
-  checkbox.type = 'checkbox';
-  titleElement.innerText = titleInput.value;
-  descriptionElement.innerText = descriptionInput.value;
-  deleteButton.innerText = 'delete';
-
-  checkbox.addEventListener('click', function() {
-    titleElement.classList.toggle('lineThrough');
-  });
-
-
-  deleteButton.addEventListener('click', function() {
-    if (titleElement.classList.contains('lineThrough')) {
-    todoItem.remove();
-    }});
-
-
-  todoItem.append(titleElement);
-  todoItem.append(checkbox);
-  todoItem.append(descriptionElement);
-  todoItem.append(deleteButton);
- 
-  
-  todoList.append(todoItem);
-
-  titleInput.value = '';
-  descriptionInput.value = '';
+  else {
+    buttonLogin.disabled = true;
   }
-});
+}
+
+login.addEventListener('input', checkInputs);
+password.addEventListener('input', checkInputs);
+
+
+function checkEmail() {
+  let mail = login.value;
+  let userName = mail.slice(0, mail.indexOf('@'));
+  let domainName = mail.slice(mail.indexOf('@') + 1, mail.indexOf('.'));
+  let domainExtens = mail.slice(mail.indexOf('.') + 1);
+
+  let accessAt = mail.split("@").length - 1 === 1;
+  let accessDot = mail.split(".").length - 1 === 1;
+  let accessPos = mail.indexOf('@') < mail.indexOf('.');
+  let accessLength = userName.length > 3 && domainName.length > 2 && domainExtens.length > 1;
+
+  emailValidation = accessAt && accessDot && accessPos && accessLength;
+}
+
+
+function checkPassword() {
+  passwordValidation = password.value.length < 6;
+}
+
+function checkError(){
+  checkEmail()
+  checkPassword()
+  if (!emailValidation && passwordValidation) {
+    pAlert.innerText = 'Неверный логин и пароль';
+    password.value = '';
+  }
+  else if (!emailValidation) {
+    pAlert.innerText = 'Неверный логин';
+    password.value = '';
+  }
+  else if (passwordValidation) {
+    pAlert.innerText = 'Неверный пароль';
+    password.value = '';
+  }
+  else if (login.value != 'admin@gmail.com' || password.value != "password123") {
+    pAlert.innerText = 'Ваш логин не зарегистрирован или неверный пароль';
+    password.value = '';
+  }
+  else {
+    pAlert.innerText = '';
+    window.location.replace("https://www.google.com/");
+  } 
+}
+
+
+
+login.addEventListener('blur', checkError)
+password.addEventListener('blur', checkError)
+
+
+
+buttonLogin.addEventListener('click', () => {
+  checkError()
+  if (redirectValue === true){
+  window.location.replace("https://www.google.com/")
+  }
+})
 

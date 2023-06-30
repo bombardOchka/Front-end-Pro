@@ -41,75 +41,7 @@ select {
   margin-right: 15px;
 }
 
-button {
-  color: #ffffff;
-  background-color: #768f9c;
-  cursor: pointer;
-}
-
-button:hover {
-  color: #18272e;
-  background-color: #ffc728;
-  border: 1px solid #ffc728;
-
-}
-
-h1 {
-  margin-bottom: 20px;
-} 
-
-.forms {
-  margin-bottom: 20px;
-  text-align: center;
-} 
-
-ul {
-  font-size: 20px;
-  list-style: none;
-  color: black;
-}
- li {
-  padding: 20px;
-  border-radius: 5px;
- }
-
-li,
-li h3,
-li p {
-margin-bottom: 15px;
-}
-
-li h3 {
-  display: inline-block;
-}
-li input {
-  margin-left: 15px;
-  height: 15px;
-  width: 15px;
-}
-li button {
-  color: #18272e;
-  background-color: #ffffff;
-  font-size: 15px;
-  padding: 8px;
-}
-li button:hover {
-  color: #ffffff;
-  background-color: #768f9c;
-  border-color: #768f9c;
-}
-.low {
-  background-color: #17a550;
-}
-
-.mid {
-  background-color: #ffc728;
-}
-
-.high {
-  background-color: #ff2828;
-}
-
-.lineThrough {
-  text-decoration: line-through;
+p {
+  margin-top: 10px;
+  color: red;
 }
