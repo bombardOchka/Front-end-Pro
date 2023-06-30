@@ -1,82 +1,49 @@
+function Student(name, faculty, marks) {
+  this.name = name;
+  this.faculty = faculty;
+  this.marks = marks;
 
-const login = document.getElementById('login');
-const password = document.getElementById('password');
-const buttonLogin = document.getElementById('buttonLogin');
-const pAlert = document.getElementById('alert');
-buttonLogin.disabled = true;
-let emailValidation = false;
-let passwordValidation = false;
-let redirectValue = false
+  this.getMedianMark = function() {
+    let mediana = 0;
+    if (this.marks.length % 2 === 0) {
+        mediana = (this.marks[this.marks.length / 2 - 1] + this.marks[this.marks.length / 2]) / 2;
+    }
+    else {
+        mediana = this.marks[(this.marks.length + 1) / 2 - 1];
+    }
+    return mediana;
+  };
 
+  this.getMaxMark = function() {
+    return Math.max(...this.marks);
+  };
 
-function checkInputs() {
-  if (login.value.trim() !== '' && password.value.trim() !== '') {
-    buttonLogin.disabled = false;
-  }
-  else {
-    buttonLogin.disabled = true;
-  }
-}
+  this.getMinMark = function() {
+    return Math.min(...this.marks);
+  };
 
-login.addEventListener('input', checkInputs);
-password.addEventListener('input', checkInputs);
+  this.getTotal = function() {
+    sum = this.marks.reduce(function(acc, el) {
+      return acc + el;
+    }, 0)
+    return sum;
+  };
 
+  this.getAvgMark = function() {
+    return this.getTotal() / this.marks.length;
+  };
 
-function checkEmail() {
-  let mail = login.value;
-  let userName = mail.slice(0, mail.indexOf('@'));
-  let domainName = mail.slice(mail.indexOf('@') + 1, mail.indexOf('.'));
-  let domainExtens = mail.slice(mail.indexOf('.') + 1);
-
-  let accessAt = mail.split("@").length - 1 === 1;
-  let accessDot = mail.split(".").length - 1 === 1;
-  let accessPos = mail.indexOf('@') < mail.indexOf('.');
-  let accessLength = userName.length > 3 && domainName.length > 2 && domainExtens.length > 1;
-
-  emailValidation = accessAt && accessDot && accessPos && accessLength;
-}
-
-
-function checkPassword() {
-  passwordValidation = password.value.length < 6;
-}
-
-function checkError(){
-  checkEmail()
-  checkPassword()
-  if (!emailValidation && passwordValidation) {
-    pAlert.innerText = 'Неверный логин и пароль';
-    password.value = '';
-  }
-  else if (!emailValidation) {
-    pAlert.innerText = 'Неверный логин';
-    password.value = '';
-  }
-  else if (passwordValidation) {
-    pAlert.innerText = 'Неверный пароль';
-    password.value = '';
-  }
-  else if (login.value != 'admin@gmail.com' || password.value != "password123") {
-    pAlert.innerText = 'Ваш логин не зарегистрирован или неверный пароль';
-    password.value = '';
-  }
-  else {
-    pAlert.innerText = '';
-    window.location.replace("https://www.google.com/");
-  } 
+  this.getInfo = function() {
+    return (`${this.name} ${this.faculty} ${this.getTotal()}`);
+  };
 }
 
 
+const student = new Student('John', 'Programming', [5, 5, 3, 4, 5, 4]);
 
-login.addEventListener('blur', checkError)
-password.addEventListener('blur', checkError)
-
-
-
-buttonLogin.addEventListener('click', () => {
-  checkError()
-  if (redirectValue === true){
-  window.location.replace("https://www.google.com/")
-  }
-})
-
+console.log(student.getAvgMark());
+console.log(student.getMedianMark());
+console.log(student.getMaxMark());
+console.log(student.getMinMark());
+console.log(student.getTotal());
+console.log(student.getInfo());
