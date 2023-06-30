@@ -17,7 +17,7 @@ const loginForm = document.getElementById('loginForm');
 
 
 
-const xhr = new XMLHttpRequest();
+
 // ======================================================================================================
 
 
@@ -74,7 +74,7 @@ function checkPassword() {
   passwordValidation = password.value.length < 6;
 }
 
-function checkError() {
+function checkError(){
   checkEmail()
   checkPassword()
 
@@ -104,61 +104,75 @@ password.addEventListener('blur', checkError);
 buttonLogin.addEventListener('click', () => {
   checkError()
   if (redirectValue === true) {
-    xhr.open('POST', 'https://reqres.in/api/login', false);
-    xhr.setRequestHeader('Content-type', 'application/json');
-    xhr.send(JSON.stringify(
-        {
-            "email": login.value,
-            "password": password.value
-        }
-    ))
+    
+    const promise = api.login({
+        "email": login.value,
+        "password": password.value
+    });
+    
 
-    if (xhr.status == 400) {
-        pAlert.innerText = `Server Error: ${JSON.parse(xhr.response)["error"]}`;
+    promise
+    .then(response => {
+        if ("error" in response) {
+            pAlert.innerText = `Server Error: ${response["error"]}`;
+        }
+        else {
+            loginForm.style.display = 'none';
+            let token = response["token"];
+    
+            api.setToken(token);
+        }
+    })
+    .catch(error => console.log(error));
     }
     else {
-        loginForm.style.display = 'none';
-        let token = JSON.parse(xhr.response)["token"];
-
-        xhr.open('PUT', 'https://reqres.in/api/users/1', false);
-        xhr.setRequestHeader('Authorization', token);
-        xhr.send();
+    password.value = '';
     }
-  }
-  else {
-    password.value = ''
-  }
   
 })
+
+
 
 
 // ======================================================================================================
 
 
+
 let currentPage = 1;
-let request = 0;
+let request = null;
+let totalPages = api.getTotalPages();
+
+
+
+if (totalPages === 1) {
+    nextBtn.disabled = true;
+}
+prevBtn.disabled = true;
+
+
 
 
 function loadUsersList() {
-    xhr.open('GET', 'https://reqres.in/api/users?page='+`${currentPage}`, false);
-    xhr.send();
-    let response = JSON.parse(xhr.response);
+    api.loadUserList(currentPage)
+    .then(response => {
+        const list = document.createElement('ul')
+        list.id = 'usersListUl'
 
-    const list = document.createElement('ul');
-    list.id = 'usersListUl';
+        for (let i = 0; i < response['data'].length; i++) {
+            const listElem = document.createElement('li')
+            listElem.innerText = `${response['data'][i]['first_name']} ${response['data'][i]['last_name']}, ${response['data'][i]['email']}`
+            list.append(listElem)
+        }
 
-    for (let i = 0; i < response['data'].length; i++) {
-        const listElem = document.createElement('li');
-        listElem.innerText = `${response['data'][i]['first_name']} ${response['data'][i]['last_name']}, ${response['data'][i]['email']}`
-        list.append(listElem);
-    }
+        usersList.append(list);
+    })
+    .catch(error => console.log(error));
 
-    usersList.append(list);
 }
 
 prevBtn.addEventListener('click', function() {
-    try {
-        document.getElementById('usersListUl').remove();
+    try{
+        document.getElementById('usersListUl').remove()
     }
     catch{}
 
@@ -174,7 +188,7 @@ prevBtn.addEventListener('click', function() {
 
 
 nextBtn.addEventListener('click', function() {
-    try {
+    try{
         document.getElementById('usersListUl').remove();
     }
     catch{}
@@ -207,41 +221,21 @@ function createUser() {
     }
 
 
-    if (request==="CREATE"){
-        xhr.open('POST', 'https://reqres.in/api/users', false);
+    if (request==="CREATE") {
+        const promise = api.createNewUsers(user);
+        createUpdateUser(promise);
     }
-    else if (request === 'UPDATE'){
-        xhr.open('PUT', 'https://reqres.in/api/users/'+`${inputID.value}`, false);
-    }
-
-    else if (request === 'DELETE'){
-        xhr.open('DELETE', 'https://reqres.in/api/users/'+`${inputID.value}`, false);
-        xhr.send();
+    else if (request === 'UPDATE') {
+        const promise = api.updateNewUsers(user, inputID.value);
+        createUpdateUser(promise);
     }
 
-
-    if (request !== 'DELETE') {
-
-    xhr.setRequestHeader('Content-type', 'application/json');
-    xhr.send(JSON.stringify(user));
-    let response = JSON.parse(xhr.response);
-
-
-    const list = document.createElement('ul');
-    list.id = 'newUsersListUl';
-
-    userKeys = Object.keys(response);
-
-    for (let i = 0; i < userKeys.length; i++) {
-        const listElem = document.createElement('li');
-        listElem.innerText = `${userKeys[i]}: ${response[userKeys[i]]}`
-        list.append(listElem)
+    else if (request === 'DELETE') {
+        api.deleteNewUsers(inputID.value);
     }
 
-    newUserList.append(list)
-    
-    }
-    else {
+
+    if (request === 'DELETE') {
         const list = document.createElement('ul');
         list.id = 'newUsersListUl';
         const text = document.createElement('p');
@@ -249,10 +243,7 @@ function createUser() {
         list.append(text);
         newUserList.append(list);
     }
-    
-    
 }
-
 
 sendBtn.addEventListener('click', function() {
     request = "CREATE";
@@ -273,12 +264,8 @@ delBtn.addEventListener('click', function() {
 
 loadUsersList();
 
-let totalPages = JSON.parse(xhr.response)['total_pages'];
 
 
-if (totalPages === 1) {
-    nextBtn.disabled = true;
-}
-prevBtn.disabled = true;
+
 
 
