@@ -11,14 +11,15 @@
 </head>
 
 <body>
+
   <div class="container">
     <div class="list">
       <h2>Users</h2>
       <div id="usersList">
       </div>
       <div class="buttons">
-        <button type="button" id="prevBtn">Prev</button>
-        <button type="button" id="nextBtn">Next</button>
+        <button type="button" id="prevBtn">prev</button>
+        <button type="button" id="nextBtn">next</button>
       </div>
     </div>
 
@@ -29,15 +30,28 @@
         <input type="text" placeholder="last_name" name="last_name" id="inputLastName">
         <input type="email" placeholder="email" name="email" id="inputEmail">
         <input type="text" placeholder="job" name="job" id="inputJob">
+        <input type="text" placeholder="id, only for del or upd" name="id" id="inputID">
       </form>
       <div class="buttons">
         <button type="button" id="sendBtn">Send</button>
+        <button type="button" id="updBtn">Update</button>
+        <button type="button" id="delBtn">Delete</button>
       </div>
     </div>
     <div class="list">
       <h2>New Users</h2>
       <div id="newUserList">
       </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="loginForm">
+    <div class="login-form">
+      <h2>Login</h2>
+      <input type="text" placeholder="email" id="email">
+      <input type="text" placeholder="password" id="password">
+      <button id="loginBtn">Login</button>
+      <p id="alert"></p>
     </div>
   </div>
 
