@@ -2,14 +2,44 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <div class="container">
+    <div class="list">
+      <h2>Users</h2>
+      <div id="usersList">
+      </div>
+      <div class="buttons">
+        <button type="button" id="prevBtn">Prev</button>
+        <button type="button" id="nextBtn">Next</button>
+      </div>
+    </div>
+
+    <div class="form">
+      <h2>Create New User</h2>
+      <form>
+        <input type="text" placeholder="first_name" name="first_name" id="inputFirstName">
+        <input type="text" placeholder="last_name" name="last_name" id="inputLastName">
+        <input type="email" placeholder="email" name="email" id="inputEmail">
+        <input type="text" placeholder="job" name="job" id="inputJob">
+      </form>
+      <div class="buttons">
+        <button type="button" id="sendBtn">Send</button>
+      </div>
+    </div>
+    <div class="list">
+      <h2>New Users</h2>
+      <div id="newUserList">
+      </div>
+    </div>
+  </div>
 
 </body>
 

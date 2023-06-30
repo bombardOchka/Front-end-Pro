@@ -1,94 +1,129 @@
-class Person {
-  constructor(name, surname) {
-    this.name = name;
-    this.surname = surname;
-  }
+const usersList = document.getElementById('usersList');
+const newUserList = document.getElementById('newUserList');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const sendBtn = document.getElementById('sendBtn');
 
-  welcome() {
-    console.log(`Hi! I'm ${this.name} ${this.surname}`);
-  }
+const inputFirstName = document.getElementById('inputFirstName');
+const inputLastName = document.getElementById('inputLastName');
+const inputEmail = document.getElementById('inputEmail');
+const inputJob = document.getElementById('inputJob');
+
+
+
+
+
+
+
+const xhr = new XMLHttpRequest();
+let currentPage = 1;
+xhr.open('GET', 'https://reqres.in/api/users?page='+`${currentPage}`, false);
+xhr.send();
+let totalPages = JSON.parse(xhr.response)['total_pages'];
+
+
+
+if (totalPages === 1) {
+    nextBtn.disabled = true
 }
 
+prevBtn.disabled = true;
 
 
-class Student extends Person {
-  constructor(name, surname,faculty, marks) {
-    super(name, surname);
-    this.faculty = faculty;
-    this.marks = marks;
-  }
 
-  getMedianMark = function() {
-    let mediana = 0;
-    if (this.marks.length % 2===0) {
-        mediana = (this.marks[this.marks.length / 2 - 1] + this.marks[this.marks.length / 2]) / 2;
+function loadUsersList() {
+    xhr.open('GET', 'https://reqres.in/api/users?page='+`${currentPage}`, false);
+    xhr.send();
+    let response = JSON.parse(xhr.response);
+
+    const list = document.createElement('ul');
+    list.id = 'usersListUl';
+
+    for (let i = 0; i < response['data'].length; i++) {
+        const listElem = document.createElement('li');
+        listElem.innerText = `${response['data'][i]['first_name']} ${response['data'][i]['last_name']}, ${response['data'][i]['email']}`;
+        list.append(listElem);
     }
-    else {
-        mediana = this.marks[(this.marks.length + 1) / 2 - 1];
+
+    usersList.append(list);
+}
+
+prevBtn.addEventListener('click', function() {
+    try {
+        document.getElementById('usersListUl').remove();
     }
-    return mediana;
-  }
+    catch {}
 
-  getMaxMark = function() {
-    return Math.max(...this.marks);
-  }
+    currentPage -= 1;
+    if (currentPage === 1) {
+        prevBtn.disabled = true;
+    }
+    nextBtn.disabled = false;
 
-  getMinMark = function() {
-    return Math.min(...this.marks);
-  }
+    loadUsersList();
+})
 
-  getTotal = function() {
-    let sum = this.marks.reduce(function(acc, el) {
-      return acc + el;
-    }, 0)
-    return sum;
-  }
 
-  getAvgMark = function() {
-    return this.getTotal() / this.marks.length;
-  }
 
-  getInfo = function() {
-    return (`${this.name} ${this.faculty} ${this.getTotal()}`);
+nextBtn.addEventListener('click', function() {
+    try {
+        document.getElementById('usersListUl').remove()
+    }
+    catch {}
+    
+
+    currentPage += 1;
+    if (currentPage === totalPages) {
+        nextBtn.disabled = true;
+    }
+    prevBtn.disabled = false;
+
+    loadUsersList();
+})
+
+
+
+function createUser() {
+
+    try {
+        document.getElementById('newUsersListUl').remove();
+    }
+    catch {}
+    
+ 
+    user = {
+        first_name: inputFirstName.value,
+        last_name: inputLastName.value,
+        email: inputEmail.value,
+        job: inputJob.value,
+    }
+
+    xhr.open('POST', 'https://reqres.in/api/users', false);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(user));
+    let response = JSON.parse(xhr.response);
+
+    
+    const list = document.createElement('ul');
+    list.id = 'newUsersListUl';
+
+    userKeys = Object.keys(response);
+
+    for (let i = 0; i < userKeys.length; i++) {
+        const listElem = document.createElement('li');
+        listElem.innerText = `${userKeys[i]}: ${response[userKeys[i]]}`;
+        list.append(listElem);
+    }
+
+    newUserList.append(list);
+
 }
-}
 
 
+sendBtn.addEventListener('click', () => createUser());
 
-class Headman extends Student {
-  constructor(name, surname, faculty, marks) {
-    super(name, surname, faculty, marks);
-  }
-  defendGroup() {
-    console.log("This is my group. I'm their hero!");
-  }
-}
+loadUsersList();
 
 
 
 
-const person = new Person('John', 'Smith');
-person.welcome();
-
-console.log('--------------------------');
-
-const student = new Student('Jane','Smith', 'Enginer', [5,5,3,5,4]);
-student.welcome();
-console.log(student.getAvgMark());
-console.log(student.getMedianMark());
-console.log(student.getMaxMark());
-console.log(student.getMinMark());
-console.log(student.getTotal());
-console.log(student.getInfo());
-
-console.log('--------------------------');
-
-const headman = new Headman('Bruce','Smith', 'Programming', [4,4,5,3,4,4]);
-headman.welcome();
-headman.defendGroup();
-console.log(headman.getAvgMark());
-console.log(headman.getMedianMark());
-console.log(headman.getMaxMark());
-console.log(headman.getMinMark());
-console.log(headman.getTotal());
-console.log(headman.getInfo());
